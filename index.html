@@ -280,7 +280,9 @@ You're an environmental advisor AI.
 
 Using this location and weather data, suggest personalized environmental lifestyle changes.
 
-Location: ${locString}
+Estimated Location: ${locString}
+(The estimated location may not be exact, but it should be close enough for practical purposes. For example, if the user enters Los Angeles, CA, you might get a nearby suburb like Pasadena or Burbank.)
+Location Coordinates: Latitude ${lat}, Longitude ${lon}
 Weather Summary:
 - Current Temp: ${weatherData.current_weather.temperature}°C
 - Wind: ${weatherData.current_weather.windspeed} km/h
