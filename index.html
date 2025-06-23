@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EnviroGo 🌍</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: #fafafa;
+      margin: 0;
+      padding: 2rem 1rem;
+      color: #1d1d1f;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.1);
+      transition: box-shadow 0.3s ease;
+    }
+    .container:hover {
+      box-shadow: 0 12px 36px rgb(0 0 0 / 0.15);
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.2rem;
+      margin-bottom: 0.25rem;
+      color: #007aff;
+      user-select: none;
+    }
+
+    p.description {
+      font-size: 1.1rem;
+      color: #3c3c4399;
+      margin-top: 0;
+      margin-bottom: 1.75rem;
+      user-select: none;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 17px;
+      border-radius: 12px;
+      border: 1.5px solid #c7c7cc;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+      outline-offset: 2px;
+      outline-color: transparent;
+    }
+    input[type="text"]:focus {
+      border-color: #007aff;
+      outline-color: #007aff;
+    }
+
+    button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 14px;
+      font-size: 17px;
+      font-weight: 600;
+      border-radius: 12px;
+      border: none;
+      background-color: #007aff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 6px 12px rgb(0 122 255 / 0.3);
+      user-select: none;
+    }
+    button:hover {
+      background-color: #005ecb;
+      box-shadow: 0 8px 20px rgb(0 94 203 / 0.5);
+    }
+    button:active {
+      background-color: #0048a1;
+    }
+
+    #loading {
+      margin-top: 1.5rem;
+      font-style: italic;
+      color: #8e8e93;
+      text-align: center;
+      user-select: none;
+      font-size: 1rem;
+      display: none;
+    }
+
+    .tips-section {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .tip-card {
+      background: #f2f2f7;
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      color: #2c2c2e;
+      line-height: 1.5;
+      font-size: 1.05rem;
+      user-select: text;
+      transition: box-shadow 0.25s ease;
+    }
+    .tip-card:hover {
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+    }
+
+    .tip-card h4 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: #007aff;
+      user-select: none;
+    }
+
+    .tip-card p {
+      white-space: pre-wrap; 
+      margin: 0;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 2rem 1rem;
+        border-radius: 12px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      border: 0 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="EnviroGo 2.0 environmental tips app">
+    <h1>EnviroGo 🌍</h1>
+    <p class="description">Get AI-powered lifestyle tips based on your local weather & other local data. !</p>
+
+    <label for="search" class="sr-only">Enter your city</label>
+    <input
+      type="text"
+      id="search"
+      name="search"
+      placeholder="Enter your city (e.g. Los Angeles, CA)"
+      autocomplete="off"
+      aria-describedby="loading"
+      aria-required="true"
+    />
+    <button onclick="getEnvironmentalTips()" aria-live="polite" aria-busy="false" id="generateBtn">
+      Generate Tips
+    </button>
+
+    <div id="loading" role="status" aria-live="assertive">Fetching data & AI tips... ⏳</div>
+
+    <section id="results" class="tips-section" style="display:none;" tabindex="-1" aria-label="Personalized sustainability suggestions">
+      <div id="locationDisplay" style="font-weight:600;color:#007aff;margin-bottom:1.5rem;"></div>
+      <div id="smallTipsSection"></div>
+      <div id="mediumTipsSection"></div>
+      <div id="largeTipsSection"></div>
+    </section>
+  </div>
+<center><p style="font-family: Arial, sans-serif; font-size: 16px; color: #2E3A59; line-height: 1.5;">
+  🌍 <strong style="color: #2E8B57;">EnviroGo</strong> is dedicated to harnessing the power of AI to deliver personalized sustainability tips that help you make eco-friendly choices every day. 
+  While we strive for accuracy, AI isn’t perfect—so if something seems off, we appreciate your understanding!
+</p></center>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    function renderTips(sectionId, header, tipsMarkdown) {
+      const section = document.getElementById(sectionId);
+      section.innerHTML = '';
+      if (!tipsMarkdown) return;
+
+      // Match all numbered tips robustly, including multiline tips
+      const tipMatches = [...tipsMarkdown.matchAll(/^\d+\.\s[\s\S]*?(?=^\d+\.|\s*$)/gm)];
+      let tips = tipMatches.map(m => m[0].trim());
+
+      // Remove category header from the first tip if present
+      if (tips.length && tips[0].match(/^[A-Za-z ]+:/)) {
+        tips[0] = tips[0].replace(/^[A-Za-z ]+:/, '').trim();
+      }
+
+      if (tips.length > 0) {
+        const headerEl = document.createElement('h4');
+        headerEl.textContent = header;
+        section.appendChild(headerEl);
+      }
+
+      tips.forEach((tip, idx) => {
+        if (!tip) return;
+        const card = document.createElement('article');
+        card.className = 'tip-card';
+        card.setAttribute('aria-label', `${header} Tip ${idx + 1}`);
+        card.innerHTML = marked.parse(tip);
+        section.appendChild(card);
+        if (idx < tips.length - 1) {
+          section.appendChild(document.createElement('br'));
+          section.appendChild(document.createElement('br'));
+        }
+      });
+    }
+
+    async function getEnvironmentalTips() {
+      const location = document.getElementById('search').value.trim();
+      const loadingEl = document.getElementById('loading');
+      const resultsEl = document.getElementById('results');
+      const generateBtn = document.getElementById('generateBtn');
+      const locationDisplay = document.getElementById('locationDisplay');
+
+      if (!location) {
+        alert('Please enter a location.');
+        return;
+      }
+
+      loadingEl.style.display = 'block';
+      loadingEl.textContent = 'Fetching data & AI tips... ⏳';
+      resultsEl.style.display = 'none';
+      generateBtn.setAttribute('aria-busy', 'true');
+      locationDisplay.textContent = '';
+
+      try {
+        // Geocode using Nominatim
+        const geoResp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
+        const geoData = await geoResp.json();
+        if (!geoData || geoData.length === 0) throw new Error("Location not found");
+        const { lat, lon } = geoData[0];
+
+        // Reverse geocode to get the accurate location string
+        let locString = '';
+        try {
+          const revGeoResp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+          const revGeoData = await revGeoResp.json();
+          locString = revGeoData.display_name || '';
+        } catch {
+          locString = geoData[0].display_name || '';
+        }
+        locationDisplay.textContent = locString ? `Showing results for: ${locString}` : '';
+
+        // Fetch weather data from open-meteo
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=uv_index,temperature_2m,apparent_temperature,precipitation,relative_humidity_2m,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max,wind_speed_10m_max&forecast_days=7&timezone=auto`;
+        const weatherResp = await fetch(weatherUrl);
+        const weatherData = await weatherResp.json();
+
+        // Prepare prompt for gemini api
+        const apiKey = 'AIzaSyC_bE7sx82i9_wGseXsN8nt9tLLPsHgc9k';
+        const prompt = `
+You're an environmental advisor AI.
+
+Using this location and weather data, suggest personalized environmental lifestyle changes.
+
+Location: ${locString}
+Weather Summary:
+- Current Temp: ${weatherData.current_weather.temperature}°C
+- Wind: ${weatherData.current_weather.windspeed} km/h
+- UV Index Max (Today): ${weatherData.daily.uv_index_max[0]}
+- 7-Day Rainfall: ${weatherData.daily.precipitation_sum.reduce((a, b) => a + b, 0)} mm
+- Weekly Temp Range: ${Math.min(...weatherData.daily.temperature_2m_min)}°C to ${Math.max(...weatherData.daily.temperature_2m_max)}°C
+
+Return tips in this format:
+Small Daily Changes:
+1. ...
+2. ...
+3. ...
+4. ...
+5. ...
+
+Medium Effort Changes:
+1. ...
+2. ...
+3. ...
+4. ...
+5. ...
+
+Large Lifestyle Changes:
+1. ...
+2. ...
+3. ...
+`;
+
+        // Fetch AI-generated tips from Gemini API
+        const geminiResp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        });
+
+        const geminiData = await geminiResp.json();
+        const rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from AI.";
+
+        //  Parse response and separate tips
+        const [small, mediumLarge] = rawText.split("Medium Effort Changes:");
+        const [medium, large] = mediumLarge?.split("Large Lifestyle Changes:") || ["", ""];
+
+        // Render each tip as a separate card with markdown formatting
+        renderTips('smallTipsSection', '💡 Small Daily Changes', small || '');
+        renderTips('mediumTipsSection', '🧰 Medium Effort Changes', medium || '');
+        renderTips('largeTipsSection', '🚀 Large Lifestyle Changes', large || '');
+
+        resultsEl.style.display = 'flex';
+        resultsEl.focus();
+      } catch (error) {
+        console.error('Error:', error);
+        alert("Something went wrong: " + error.message);
+      } finally {
+        loadingEl.style.display = 'none';
+        generateBtn.setAttribute('aria-busy', 'false');
+      }
+    }
+  </script>
+</body>
+</html>
